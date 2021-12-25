@@ -1,6 +1,9 @@
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
+from constants import (CAR_PROPERTIES, SPECIFICATIONS_PROPERTIES_TRANSLATIONS)
+from utils import (clean_number, take_digits_only,
+                   take_letters_only, scrollToBottom)
 
 
 # Path to chromedriver
@@ -12,23 +15,30 @@ driver = webdriver.Chrome(PATH)
 itemsScraped = {}
 
 # our website - carweiz
-# driver.get("https://carwiz.co.il/used-cars")
-driver.get("https://carwiz.co.il/used-cars/698c48b5-8c5d-42a8-ab01-9abb07ec757e/2015-%D7%9E%D7%90%D7%96%D7%93%D7%94-6")
+driver.get("https://carwiz.co.il/used-cars")
 
 
 def getLinks():
 
-    # This will get us to the elemnt that contain the link of the cars
-    cars = driver.find_elements(
-        By.XPATH, "// a[contains(@class, 'MuiButtonBase-root') and contains(@class, 'MuiButton-root') and contains(@class, 'car-details-button')]")
-
     listOfLinks = []
 
-    # Here we get the actual links
-    for index, car in enumerate(cars):
-        link = car.get_attribute("href")
-        listOfLinks.append(link)
-        print("Link {}: {}".format(index, link))
+    while True:
+        cars = driver.find_elements(
+            By.XPATH, "// a[contains(@class, 'MuiButtonBase-root') and contains(@class, 'MuiButton-root') and contains(@class, 'car-details-button')]")
+
+        for car in cars:
+            link = car.get_attribute("href")
+            if(link not in listOfLinks):
+                listOfLinks.append(link)
+
+        # Scroll down to bottom
+        print("SCROLLING TO BOTTOM")
+        driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
+
+        if(len(listOfLinks) >= 10):
+            break
 
     return listOfLinks
 
@@ -42,27 +52,13 @@ def getCarDetails(objectToFill):
     details = detailsContainer.find_elements(
         By.CSS_SELECTOR, "tr[class='MuiTableRow-root']")
 
-    arrayOfKeys = [
-        "carName",
-        "year",
-        "engine",
-        "current_km",
-        "hand",
-        "gearbox",
-        "color",
-        "original_ownership",
-        "next_test",
-        "annual_licensing_fee"
-    ]
-
     for index, detail in enumerate(details):
         # Bring us all of his "children" in array
         items = detail.find_elements(
             By.CSS_SELECTOR, "*")
 
         value = items[1].text
-        key = arrayOfKeys[index]
-        print("{}: {}".format(key, value))
+        key = CAR_PROPERTIES[index]
         objectToFill[key] = value
 
 
@@ -80,43 +76,98 @@ def getHeaders(objectToFill):
     try:
         newCarPrice = driver.find_element(
             By.XPATH, "// p[contains(text(), 'היקר בהיצע')]").find_element(By.XPATH, "..").find_elements(
-                By.CSS_SELECTOR, "*")[2].text
+                By.CSS_SELECTOR, "*")[2]
+        objectToFill["new_car_price"] = newCarPrice.text
     except:
         print("No new car price FOUND")
 
-    # TODO: Check about reverse the texts
     objectToFill["city"] = city.text
     objectToFill["price"] = price.text
-    objectToFill["new_car_price"] = newCarPrice
 
 
-def getSpecifications():
+def getSpecifications(objectToFill):
     specificationsContainer = driver.find_element(
         By.XPATH, "// h2[contains(text(), 'מפרט טכני')]").find_element(By.XPATH, "..")
 
-    specifications = specificationsContainer.find_elements(
+    specificationsHeaders = specificationsContainer.find_elements(
         By.XPATH, "// div[contains(@class, 'MuiPaper-root') and contains(@class, 'MuiAccordion-root') and contains(@class, 'MuiPaper-elevation0')]")
 
-    print(len(specifications))
+    # This opens all the tabs
+    for index, header in enumerate(specificationsHeaders):
+        if(index != 0):
+            header.click()
+            time.sleep(0.5)
+
+    # This is all the keys
+    specificationsKeys = specificationsContainer.find_elements(
+        By.XPATH, "// div[contains(@class, 'MuiGrid-root') and contains(@class, 'MuiGrid-item') and contains(@class, 'MuiGrid-grid-xs-6') and contains(@class, 'MuiGrid-grid-md-8')]")
+
+    specificationsValues = specificationsContainer.find_elements(
+        By.XPATH, "// div[contains(@class, 'MuiGrid-root') and contains(@class, 'MuiGrid-item') and contains(@class, 'MuiGrid-grid-xs-5') and contains(@class, 'MuiGrid-grid-md-3')]")
+
+    # Takes the p tags and takes the text
+    for index, spec in enumerate(specificationsKeys):
+
+        key = spec.find_element(By.TAG_NAME, "p").text
+
+        value = specificationsValues[index].find_element(
+            By.TAG_NAME, "p").text
+
+        keyTranslated = SPECIFICATIONS_PROPERTIES_TRANSLATIONS[key]
+        objectToFill[keyTranslated] = value
+
+
+def normalizeData(objectToFill):
+    tempObj = {}
+
+    for key, value in objectToFill.items():
+        if(not value.isdecimal()):  # if it is not a number
+            tempObj[key] = clean_number(value)
+
+        if(key == "rear_wheels" or key == "front_wheels"):
+            splitSlash = value.split("/")  # 175/65r14 [175,65r14]
+            tire_width = splitSlash[0]
+            tireType = take_letters_only(splitSlash[1])  # r
+            splittedValues = splitSlash[1].split(tireType)  # [65,14]
+            [height_ratio, wheel_diameter] = splittedValues
+
+            tempObj["tire_type"] = tireType
+            tempObj["tire_width"] = tire_width
+            tempObj["height_ratio"] = height_ratio
+            tempObj["wheel_diameter"] = wheel_diameter
+
+            del tempObj[key]
+
+        elif(key == "next_test" or key == "engine"):
+            tempObj[key] = take_digits_only(value)
+        elif(value == "יש"):
+            tempObj[key] = 1
+        elif(value == "אין"):
+            tempObj[key] = 0
+        else:
+            tempObj[key] = value
+
+    return tempObj
 
 
 def main():
     data = []
 
     linksOfCars = getLinks()
+
     # for every link  call this call functions
     for link in linksOfCars:
         objectToFill = {}
         driver.get(link)
         getCarDetails(objectToFill)
         getHeaders(objectToFill)
-        data.append(objectToFill)
-        print(objectToFill)
+        getSpecifications(objectToFill)
+        normalizedData = normalizeData(objectToFill)
+        data.append(normalizedData)
+
+    print(data)
 
 
-# main()
-getSpecifications()
-# driver.get("https://carwiz.co.il/used-cars/115c8036-85ef-4871-bf2e-6ccf771e0a57/2019-%D7%A7%D7%99%D7%94-%D7%A4%D7%99%D7%A7%D7%A0%D7%98%D7%95")
-# getHeaders({})
+main()
 
 time.sleep(20)
