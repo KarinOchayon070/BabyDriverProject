@@ -2,8 +2,7 @@ from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
 from constants import (CAR_PROPERTIES, SPECIFICATIONS_PROPERTIES_TRANSLATIONS)
-from utils import (clean_number, take_digits_only,
-                   take_letters_only, scrollToBottom)
+from utils import (clean_number, take_digits_only, take_letters_only)
 
 
 # Path to chromedriver
@@ -37,7 +36,7 @@ def getLinks():
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
 
-        if(len(listOfLinks) >= 10):
+        if(len(listOfLinks) >= 30):
             break
 
     return listOfLinks
@@ -121,9 +120,6 @@ def normalizeData(objectToFill):
     tempObj = {}
 
     for key, value in objectToFill.items():
-        if(not value.isdecimal()):  # if it is not a number
-            tempObj[key] = clean_number(value)
-
         if(key == "rear_wheels" or key == "front_wheels"):
             splitSlash = value.split("/")  # 175/65r14 [175,65r14]
             tire_width = splitSlash[0]
@@ -136,8 +132,6 @@ def normalizeData(objectToFill):
             tempObj["height_ratio"] = height_ratio
             tempObj["wheel_diameter"] = wheel_diameter
 
-            del tempObj[key]
-
         elif(key == "next_test" or key == "engine"):
             tempObj[key] = take_digits_only(value)
         elif(value == "יש"):
@@ -145,7 +139,7 @@ def normalizeData(objectToFill):
         elif(value == "אין"):
             tempObj[key] = 0
         else:
-            tempObj[key] = value
+            tempObj[key] = clean_number(value)
 
     return tempObj
 
@@ -156,18 +150,20 @@ def main():
     linksOfCars = getLinks()
 
     # for every link  call this call functions
-    for link in linksOfCars:
-        objectToFill = {}
-        driver.get(link)
-        getCarDetails(objectToFill)
-        getHeaders(objectToFill)
-        getSpecifications(objectToFill)
-        normalizedData = normalizeData(objectToFill)
-        data.append(normalizedData)
+    for link in linksOfCars[15:25]:
+        try:
+            objectToFill = {}
+            driver.get(link)
+            getCarDetails(objectToFill)
+            getHeaders(objectToFill)
+            getSpecifications(objectToFill)
+            normalizedData = normalizeData(objectToFill)
+            data.append(normalizedData)
+        except:
+            print("ERROR IN CRAWLER: " + link)
+    return data
 
-    print(data)
 
-
-main()
+# main()
 
 time.sleep(20)
