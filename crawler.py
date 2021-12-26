@@ -4,7 +4,6 @@ from selenium.webdriver.common.by import By
 from constants import (CAR_PROPERTIES, SPECIFICATIONS_PROPERTIES_TRANSLATIONS)
 from utils import (clean_number, take_digits_only, take_letters_only)
 
-
 # Path to chromedriver
 PATH = "C:\Windows\chromedriver.exe"
 
@@ -36,7 +35,7 @@ def getLinks():
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
 
-        if(len(listOfLinks) >= 30):
+        if(len(listOfLinks) >= 2000):
             break
 
     return listOfLinks
@@ -134,10 +133,28 @@ def normalizeData(objectToFill):
 
         elif(key == "next_test" or key == "engine"):
             tempObj[key] = take_digits_only(value)
+        elif(value == "ליסינג"):
+            tempObj[key] = 0
+        elif(value == "פרטית"):
+            tempObj[key] = 1
+        elif(value == "ידנית"):
+            tempObj[key] = 0
+        elif(value == "אוטומטית"):
+            tempObj[key] = 1
+        elif(value == "ידני"):
+            tempObj[key] = 0
+        elif(value == "אוטומטי"):
+            tempObj[key] = 1
+        elif(value == "סגסוגת"):
+            tempObj[key] = 1
+        elif(value == "פלדה"):
+            tempObj[key] = 0
         elif(value == "יש"):
             tempObj[key] = 1
         elif(value == "אין"):
             tempObj[key] = 0
+        elif(value == "טורבו"):
+            tempObj[key] = 1
         else:
             tempObj[key] = clean_number(value)
 
@@ -150,7 +167,7 @@ def main():
     linksOfCars = getLinks()
 
     # for every link  call this call functions
-    for link in linksOfCars[15:25]:
+    for link in linksOfCars:
         try:
             objectToFill = {}
             driver.get(link)
