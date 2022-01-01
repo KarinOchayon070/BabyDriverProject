@@ -151,13 +151,28 @@ def box_plot():
 # one_dim_plot(sr, 'pie', axes[1])
 # one_dim_plot(sr, 'bar', axes[0])
 
+def create_crosstab():
+    ct2 = pd.crosstab(df["year"], df["hand"], normalize="index")
+    ct2.plot(kind="bar", figsize=(5, 2))
+    plt.title("PRICE vs YEAR")
+    plt.xlabel("YEAR")
+    plt.ylabel("HAND")
+
+
+def create_figure_pie():
+    df["car_company"].value_counts().plot(
+        kind="pie", autopct="%1.1f%%", figsize=(7, 7), fontsize=7)
+    plt.title("All categories")
+
+
 def main():
     spilt_to_car_company_and_car_model()
     reverse_strings_inside_eda()
     find_outliers()
     # list_categorical_cols()
-    list_numerical_cols_for_linear_regression_model()
+    # list_numerical_cols_for_linear_regression_model()
     # box_plot()
+    create_figure_pie()
 
 
 main()
