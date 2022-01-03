@@ -1,4 +1,6 @@
+from io import DEFAULT_BUFFER_SIZE
 import random
+from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 import pickle
@@ -185,7 +187,7 @@ color = {
 class CarBabyUI:
     def __init__(self, window):
         self.window = window
-        self.window.title("Car Baby")
+        self.window.title("Dor & Karin amazing project :)")
         self.window.geometry("500x700")
         self.layout()
         self.load_model()
@@ -202,11 +204,11 @@ class CarBabyUI:
         self.current_km = self.create_input("current km")
         self.hand = self.create_input("hand")
         self.next_test = self.create_input("next test")
-        self.new_car_price = self.create_input("new car price")
-
+        self.new_car_price = self.create_input("Tariff")
         self.create_button("Predict price", self.predict_price)
         self.create_button("Auto Fill", self.auto_fill_form)
-
+        self.clear_button = self.create_button(
+            "Clear", self.clear_text)
         self.predicted_price_label = self.create_label()
 
     def create_label(self, text=""):
@@ -234,7 +236,7 @@ class CarBabyUI:
     def create_button(self, text, command):
         button = tk.Button(self.window, text=text, command=command,
                            font=("Arial", 14), width=12, bg="pink")
-        button.pack(pady=10)
+        button.pack(pady=5)
         return button
 
     def auto_fill_form(self):
@@ -267,6 +269,17 @@ class CarBabyUI:
         prediction = self.linear.predict(predicted_data)
         self.predicted_price_label.config(
             text=f"Predicted price: {prediction[0]}")
+
+    # Define a function to clear the Entry Widget Content
+    def clear_text(self):
+        self.carCompany.delete(0, tk.END)
+        self.city.delete(0, tk.END)
+        self.color.delete(0, tk.END)
+        self.year.delete(0, tk.END)
+        self.current_km.delete(0, tk.END)
+        self.hand.delete(0, tk.END)
+        self.next_test.delete(0, tk.END)
+        self.new_car_price.delete(0, tk.END)
 
 
 window = tk.Tk()
