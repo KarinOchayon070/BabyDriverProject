@@ -1,3 +1,5 @@
+# Few constants are defined in this file for the benefit of use in the EDA section :)
+
 col_numeric = ['price',
                'tire_width',
                'height_ratio',

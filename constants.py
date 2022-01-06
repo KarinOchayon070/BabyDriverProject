@@ -1,3 +1,5 @@
+# Few constants are defined in this file - for the benefit of future use :)
+
 CAR_PROPERTIES = [
     "carName",
     "year",
@@ -11,6 +13,20 @@ CAR_PROPERTIES = [
     "annual_licensing_fee"
 ]
 
+RELEVANT_PROPERTIES_FOR_MODEL = [
+    "carName",
+    "year",
+    "engine",
+    "current_km",
+    "hand",
+    "gearbox",
+    "color",
+    "original_ownership",
+    "next_test",
+    "annual_licensing_fee",
+    "price",
+    "city"
+]
 
 SPECIFICATIONS_PROPERTIES_TRANSLATIONS = {
     "טורבו": "turbo",
@@ -159,77 +175,3 @@ DATABASE_COLUMNS = {
     "next_test": "TEXT",
     "annual_licensing_fee": "INTEGER",
 }
-
-
-# DELETE THIS LATER
-DEMO_DATA = [{
-    "carName": "מאז'דה  3",
-    "year": "2021",
-    "engine": "1998",
-    "current_km": "8,000",
-    "hand": "2",
-    "gearbox": "אוטומטית",
-    "color": "שחור מטלי",
-    "original_ownership": "פרטית",
-    "next_test": "2",
-    "annual_licensing_fee": "2,130 ₪",
-    "new_car_price": "155,000 ₪",
-    "city": "בת ים",
-    "price": "136,000 ₪",
-    "number_of_doors": "4",
-    "number_of_seats": "5",
-    "avrage_fuel_consumption": "13.9",
-    "avrage_fuel_consumption_city": "18.9",
-    "avrage_fuel_consumption_highway": "14.1",
-    "fuel_type": "בנזין",
-    "horsepower": "165",
-    "max_speed": "208",
-    "max_torque": "2,087.4",
-    "number_of_cylinders": "4",
-    "number_of_gears": "6",
-    "rounds_per_minute_for_max_power": "6000",
-    "rounds_per_minute_for_max_torque": "4,000",
-    "zero_to_100_km_in_seconds": "8.5",
-    "automatic_high_beam": 1,
-    "independent_emergency_break": 1,
-    "abs": 1,
-    "turn_tracking_headlights": 1,
-    "cancel_airbag": 1,
-    "isofix": 1,
-    "lane_departure_warning_system": 1,
-    "number_of_airbags": "7",
-    "seat_belt_warning_system": 1,
-    "airpressure_sensors": 1,
-    "road_sign_recognition": 0,
-    "trunk_volume_in_liters": "444",
-    "front_seat_headroom_in_cm": "96.5",
-    "rear_seat_headroom_in_cm": "94.7",
-    "height_in_cm": "144",
-    "front_legroom_in_cm": "107.5",
-    "rear_legroom_in_cm": "89.1",
-    "length_in_cm": "466",
-    "front_seat_shoulder_in_cm": "141.4",
-    "rear_seat_shoulder_in_cm": "135.9",
-    "width_in_cm": "179.5",
-    "tire_type": "R",
-    "tire_width": "215",
-    "height_ratio": "45",
-    "wheel_diameter": "18",
-    "full_tank_volume_in_liters": "51",
-    "maximal_weight_in_kg": "1,870",
-    "minimal_weight_in_kg": "1,454",
-    "wheelbase_in_cm": "272.5",
-    "subwoofer": 0,
-    "rear_control_air_conditioning": 0,
-    "air_conditioning": "אוטומטי",
-    "number_of_air_conditioning_locations": "2",
-    "cruise_control": 1,
-    "driver_heated_seat": 0,
-    "head_light": "לד",
-    "heated_front_passenger_seat": 0,
-    "electric_windows": "4",
-    "rain_sensors": 1,
-    "heated_rear_passenger_seat": 0,
-    "roof_window": 1,
-    "hoops": "סגסוגת"
-}]

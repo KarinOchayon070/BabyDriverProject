@@ -16,28 +16,23 @@ itemsScraped = {}
 driver.get("https://carwiz.co.il/used-cars")
 
 
+# Here we get the links of all the cars - stop at 2000 cars
 def getLinks():
-
     listOfLinks = []
-
     while True:
         cars = driver.find_elements(
             By.XPATH, "// a[contains(@class, 'MuiButtonBase-root') and contains(@class, 'MuiButton-root') and contains(@class, 'car-details-button')]")
-
         for car in cars:
             link = car.get_attribute("href")
             if(link not in listOfLinks):
                 listOfLinks.append(link)
-
         # Scroll down to bottom
         print("SCROLLING TO BOTTOM")
         driver.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
-
         if(len(listOfLinks) >= 2000):
             break
-
     return listOfLinks
 
 
@@ -46,15 +41,12 @@ def getCarDetails(objectToFill):
 
     detailsContainer = driver.find_element(
         By.CSS_SELECTOR, "tbody[class='MuiTableBody-root']")
-
     details = detailsContainer.find_elements(
         By.CSS_SELECTOR, "tr[class='MuiTableRow-root']")
-
     for index, detail in enumerate(details):
         # Bring us all of his "children" in array
         items = detail.find_elements(
             By.CSS_SELECTOR, "*")
-
         value = items[1].text
         key = CAR_PROPERTIES[index]
         objectToFill[key] = value
@@ -64,13 +56,10 @@ def getCarDetails(objectToFill):
 def getHeaders(objectToFill):
 
     newCarPrice = None
-
     city = driver.find_element(
         By.XPATH, "// p[contains(@class, 'MuiTypography-root') and contains(@class, 'MuiTypography-body2')]")
-
     price = driver.find_element(
         By.XPATH, "// div[contains(@class, 'MuiBox-root') and contains(@align, 'center')]")
-
     try:
         newCarPrice = driver.find_element(
             By.XPATH, "// p[contains(text(), 'היקר בהיצע')]").find_element(By.XPATH, "..").find_elements(
@@ -78,15 +67,15 @@ def getHeaders(objectToFill):
         objectToFill["new_car_price"] = newCarPrice.text
     except:
         print("No new car price FOUND")
-
     objectToFill["city"] = city.text
     objectToFill["price"] = price.text
+
+# Here we get specifications - engine, transmission, etc...
 
 
 def getSpecifications(objectToFill):
     specificationsContainer = driver.find_element(
         By.XPATH, "// h2[contains(text(), 'מפרט טכני')]").find_element(By.XPATH, "..")
-
     specificationsHeaders = specificationsContainer.find_elements(
         By.XPATH, "// div[contains(@class, 'MuiPaper-root') and contains(@class, 'MuiAccordion-root') and contains(@class, 'MuiPaper-elevation0')]")
 
@@ -107,17 +96,15 @@ def getSpecifications(objectToFill):
     for index, spec in enumerate(specificationsKeys):
 
         key = spec.find_element(By.TAG_NAME, "p").text
-
         value = specificationsValues[index].find_element(
             By.TAG_NAME, "p").text
-
         keyTranslated = SPECIFICATIONS_PROPERTIES_TRANSLATIONS[key]
         objectToFill[keyTranslated] = value
 
 
+# Here we normalize the data - we arranged everything more neatly under "cleanMe"
 def normalizeData(objectToFill):
     tempObj = {}
-
     for key, value in objectToFill.items():
         if(key == "rear_wheels" or key == "front_wheels"):
             splitSlash = value.split("/")  # 175/65r14 [175,65r14]
@@ -125,7 +112,6 @@ def normalizeData(objectToFill):
             tireType = take_letters_only(splitSlash[1])  # r
             splittedValues = splitSlash[1].split(tireType)  # [65,14]
             [height_ratio, wheel_diameter] = splittedValues
-
             tempObj["tire_type"] = tireType
             tempObj["tire_width"] = tire_width
             tempObj["height_ratio"] = height_ratio
@@ -157,15 +143,14 @@ def normalizeData(objectToFill):
             tempObj[key] = 1
         else:
             tempObj[key] = clean_number(value)
-
     return tempObj
+
+# Run this baby!
 
 
 def main():
     data = []
-
     linksOfCars = getLinks()
-
     # for every link  call this call functions
     for link in linksOfCars:
         try:
@@ -181,6 +166,5 @@ def main():
     return data
 
 
-# main()
-
+# Give him time to breathe
 time.sleep(20)
