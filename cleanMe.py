@@ -1,5 +1,4 @@
 # Here we did the data cleaning and the data preprocessing - using SQLite
-
 import sqlite3
 import statistics
 con = sqlite3.connect('crawlerData.db')
@@ -11,6 +10,8 @@ c = con.cursor()
 # con.execute('UPDATE main SET hoops=3 WHERE hoops IS "סגסוגת כרום"')
 # con.execute('UPDATE main SET head_light="הלוגן" WHERE head_light IS NULL')
 
+
+# Mean calc - next_test
 # c.execute(
 #     'SELECT next_test FROM main')
 
@@ -171,5 +172,6 @@ c.execute(
 #     except:
 #         print("error in:", col_name)
 
+# Always commit close the connection - DO NOT DELETE
 con.commit()
 con.close()

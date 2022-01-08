@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pylab as plt
 import pandas as pd
 import numpy as np
@@ -10,15 +11,19 @@ from collections import Counter
 from sklearn.decomposition import PCA
 from scipy import stats
 from edaConstants import col_numeric, col_strings
+from scipy.stats import pearsonr
+from matplotlib import pyplot as plt
+import matplotlib as mpl
 
-# -------------------------------------------------------------------------------------------------------------------#
+
+# ------------------------------------------------------------------------------------------------------------------- #
 
 # paths
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(ROOT_PATH, "csvData.csv")
 df = pd.read_csv(CSV_PATH)
 
-# -------------------------------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------------------------------- #
 
 # Function that split between the car company and the car model
 
@@ -169,6 +174,21 @@ def create_crosstab():
     plt.xlabel("Year")
     plt.ylabel("Hand")
 
+
+# -------------------------------------------------------------------------------------------------------------------#
+# In this section we used - https://www.geeksforgeeks.org/python-pearson-correlation-test-between-two-variables/
+
+
+#  Pearson Correlation Test Between Two Variables - year and hand
+# Convert dataframe into series
+list1 = df['year']
+list2 = df['hand']
+# Apply the pearsonr()
+corr, _ = pearsonr(list1, list2)
+print('Pearsons correlation (year and hand): %.3f' % corr)
+# This code is contributed by Amiya Rout
+
+plt.scatter(df['year'], df['hand'])
 # -------------------------------------------------------------------------------------------------------------------#
 
 
@@ -208,7 +228,7 @@ def main():
     spilt_to_car_company_and_car_model()
     reverse_strings_inside_eda()
     # create_figure_pie_2()
-    one_dim_plot()
+    # one_dim_plot()
     # find_outliers()
     # list_categorical_cols()
     # list_numerical_cols_for_linear_regression_model()

@@ -183,7 +183,6 @@ class CarBabyUI:
         self.current_km.delete(0, tk.END)
         self.hand.delete(0, tk.END)
         self.next_test.delete(0, tk.END)
-        # self.new_car_price.delete(0, tk.END)
         self.engine.delete(0, tk.END)
         self.annual_licensing_fee.delete(0, tk.END)
 
