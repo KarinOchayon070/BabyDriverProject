@@ -208,7 +208,7 @@ def main():
     spilt_to_car_company_and_car_model()
     reverse_strings_inside_eda()
     # create_figure_pie_2()
-    # one_dim_plot()
+    one_dim_plot()
     # find_outliers()
     # list_categorical_cols()
     # list_numerical_cols_for_linear_regression_model()

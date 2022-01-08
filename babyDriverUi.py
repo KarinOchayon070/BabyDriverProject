@@ -1,3 +1,5 @@
+# This is the relevent UI for our project
+
 from io import DEFAULT_BUFFER_SIZE
 from math import log
 import random
@@ -47,7 +49,7 @@ class CarBabyUI:
         self.window = window
         self.window.title(
             "WOW --- Karin & Dor amazing project --- WOW")
-        self.window.geometry("450x880")
+        self.window.geometry("450x700")
         self.cars = create_car_model_to_number_dict()
         self.colors = create_color_to_number_dict()
         self.cities = create_city_to_number_dict()
@@ -89,14 +91,14 @@ class CarBabyUI:
 
     # Create a label
     def create_label(self, text=""):
-        label = tk.Label(self.window, text=text, font=("Arial", 14))
+        label = tk.Label(self.window, text=text, font=("Arial", 10))
         label.pack()
         return label
 
     # Create input - notice that "create_label" is called before "create_input" (for input we need to know the label)
     def create_input(self, text):
         self.create_label(text)
-        input = tk.Entry(self.window, bg="white", font=("Arial", 14))
+        input = tk.Entry(self.window, bg="white", font=("Arial", 10))
         input.pack()
         return input
 
@@ -105,7 +107,7 @@ class CarBabyUI:
         self.create_label(text)
         variable = tk.StringVar()
         selector = ttk.Combobox(self.window, textvariable=variable, values=options, font=(
-            "Arial", 14), background="white")
+            "Arial", 10), background="white")
         selector.configure(background="white")
         selector.pack()
         return selector
@@ -113,7 +115,7 @@ class CarBabyUI:
     # Create button
     def create_button(self, text, command):
         button = tk.Button(self.window, text=text, command=command,
-                           font=("Arial", 14), width=12, bg="#ff0066")
+                           font=("Arial", 10), width=12, bg="#ff0066")
         button.pack(pady=10)
         return button
 

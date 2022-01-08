@@ -1,3 +1,8 @@
+
+# UI for car company, not include the car model!!!
+# Not in use.
+# Here we use the "bestmodel87.pickle" to predict the price of the car
+
 from io import DEFAULT_BUFFER_SIZE
 import random
 from tkinter import *

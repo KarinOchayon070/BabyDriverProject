@@ -1,3 +1,5 @@
+# Here we did the data cleaning and the data preprocessing - using SQLite
+
 import sqlite3
 import statistics
 con = sqlite3.connect('crawlerData.db')
